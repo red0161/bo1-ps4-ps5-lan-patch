@@ -199,8 +199,13 @@ function Invoke-Action([string]$ip, [string]$action, [string]$value) {
             "restore" { Set-Protocol $stream $procId $ORIGINAL }
             default   { throw "Unknown action '$action'. Use status, apply or restore." }
         }
+        return $true
     } catch {
         Write-Host ("Error: " + $_.Exception.Message) -ForegroundColor Red
+        if ($_.Exception.Message -like "Can't reach*") {
+            Write-Host "Port 744 is ps4debug itself. Send the ps4debug payload first (loader port 9090), then try again." -ForegroundColor Yellow
+        }
+        return $false
     } finally {
         if ($client) { $client.Close() }
     }
@@ -208,7 +213,7 @@ function Invoke-Action([string]$ip, [string]$action, [string]$value) {
 
 # ---------------- entry point ----------------
 if ($Ip -and $Action) {
-    Invoke-Action $Ip $Action $Value
+    Invoke-Action $Ip $Action $Value | Out-Null
     return
 }
 
@@ -223,13 +228,14 @@ while ($true) {
     $choice = (Read-Host "Choose 1-4").Trim()
     switch ($choice) {
         "1" {
-            Invoke-Action $Ip "apply" "0x849"
-            Write-Host ""
-            Write-Host "If every line shows 0x849: PS4 -> LAN -> Create Game -> START THE MATCH, then join from the other console."
-            Write-Host "Re-apply after restarting BO1."
+            if (Invoke-Action $Ip "apply" "0x849") {
+                Write-Host ""
+                Write-Host "If every line shows 0x849: PS4 -> LAN -> Create Game -> START THE MATCH, then join from the other console."
+                Write-Host "Re-apply after restarting BO1."
+            }
         }
-        "2" { Invoke-Action $Ip "status" "" }
-        "3" { Invoke-Action $Ip "restore" "" }
+        "2" { Invoke-Action $Ip "status" "" | Out-Null }
+        "3" { Invoke-Action $Ip "restore" "" | Out-Null }
         "4" { return }
     }
     Read-Host "Press Enter to continue" | Out-Null
