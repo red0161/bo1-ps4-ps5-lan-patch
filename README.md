@@ -2,6 +2,12 @@
 
 Lets a console on **Black Ops 1 version 1.09** (retail PS5 or PS4) join and stay in a LAN match hosted by a **jailbroken PS4 on BO1 01.08** (CUSA57547).
 
+## Download
+
+**[⬇ Download the latest release (ZIP)](https://github.com/red0161/bo1-ps4-ps5-lan-patch/releases/latest/download/BO1-PS4-PS5-LAN-Patch.zip)**
+
+Extract it, then follow [Usage](#usage) below. All releases: [Releases page](https://github.com/red0161/bo1-ps4-ps5-lan-patch/releases).
+
 ## Why it's needed
 
 Every copy of BO1 reports a network version (protocol) when it advertises or joins a match:
