@@ -17,25 +17,31 @@ When they differ, the lobby is hidden and joins fail with *"Server is a differen
 
 - Jailbroken PS4 with BO1 **01.08** (host) and the ps4debug payload loaded
 - A second console with BO1 **1.09** (guest, retail is fine)
-- Windows PC on the same network, with [Python 3](https://www.python.org/downloads/) (tick "Add to PATH")
+- A Windows PC on the same network. **Nothing to install:** the patch is a plain PowerShell script, and PowerShell is built into Windows.
 - Both consoles on the same home network. Wired is best. No guest/IoT network.
 
 ## Usage
 
 1. PS4: load ps4debug, start BO1 and go to the Multiplayer menu.
 2. PC: keep any RTM / LAN Fix tool **closed** for now.
-3. PC: double-click **`Apply Patch.cmd`** and enter the PS4's IP. Every line should show `0x849`.
+3. PC: double-click **`Start Patch.cmd`**, enter the PS4's IP, and choose **1. Apply patch**. Every line should show `0x849`.
 4. PS4: LAN → Create Game → **start the match** and wait until you can move.
 5. Guest: LAN → Join Game → join → pick team and class.
 6. Only now open your RTM / LAN Fix tool, if you use one.
 
+The menu also has **Check status** and **Restore original**.
+
+`Start Patch.cmd` just runs `Patch-BO1.ps1`. Open either one in Notepad to see exactly what it does: no downloads, no installs, it only talks to ps4debug on your PS4.
+
 Command line equivalent:
 
 ```
-python protocol_patch.py <ps4_ip> apply 0x849
-python protocol_patch.py <ps4_ip> status
-python protocol_patch.py <ps4_ip> restore
+powershell -ExecutionPolicy Bypass -File Patch-BO1.ps1 <ps4_ip> apply
+powershell -ExecutionPolicy Bypass -File Patch-BO1.ps1 <ps4_ip> status
+powershell -ExecutionPolicy Bypass -File Patch-BO1.ps1 <ps4_ip> restore
 ```
+
+A Python version with the same logic is in [`python/`](python/) if you prefer it (`python protocol_patch.py <ps4_ip> apply 0x849`).
 
 ## Notes
 
@@ -48,6 +54,7 @@ python protocol_patch.py <ps4_ip> restore
 
 | Problem | Fix |
 |---|---|
+| Window flashes and closes, or "running scripts is disabled" | Use `Start Patch.cmd`, not the `.ps1` directly. It bypasses the policy for this one script only |
 | `codmp.elf is not running` | Start BO1 on the PS4 first |
 | `Can't reach ps4debug` | Load the payload, check the PS4's IP |
 | Guest can't see the match | Make sure the PS4 **started** the match, status shows `0x849` everywhere, and no RTM tool was open yet |
